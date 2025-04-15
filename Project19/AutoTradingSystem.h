@@ -3,7 +3,9 @@
 #include "StockerBroker.h"
 
 class AutoTradingSystem {
-  StockerBroker *stockBroker;
+	StockerBroker *stockBroker;
  public:
-  void selectStockBroker(std::string nameOfStockBroker);
+	AutoTradingSystem(StockerBroker* stockBroker) : stockBroker(stockBroker) {};
+	void selectStockBroker(std::string nameOfStockBroker);
+	bool buyNiceTiming(std::string stockCode, int price);
 };

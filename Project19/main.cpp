@@ -7,6 +7,12 @@
 using namespace testing;
 using namespace std;
 
+class StockerBrokerMock : public StockerBroker {
+public:
+    MOCK_METHOD(int, buy, (std::string stockCode, int price, int quantity), (override));
+    MOCK_METHOD(int, getPrice, (std::string stockCode, int minute), (override));
+};
+
 // ===================== TEST CASE =====================
 
 // 증권사 선택 테스트
@@ -27,37 +33,32 @@ TEST(LoginTest, LoginWithCorrectCredentials_ShouldCallLoginAPI) {
     EXPECT_TRUE(success);
 }
 
-// 매수 테스트
-TEST(BuyTest, BuyStock_ShouldCallBuyAPIWithCorrectParams) {
-    AutoTrader trader;
-    bool result = trader.buy("005930", 5000, 10);
-    EXPECT_TRUE(result);
-}
-
-// 매도 테스트
-TEST(SellTest, SellStock_ShouldCallSellAPIWithCorrectParams) {
-    AutoTrader trader;
-    bool result = trader.sell("005930", 5100, 5);
-    EXPECT_TRUE(result);
-}
-
-// 현재가 확인 테스트
-TEST(PriceTest, GetCurrentPrice_ShouldReturnCorrectPrice) {
-    AutoTrader trader;
-    int price = trader.getPrice("005930");
-    EXPECT_GT(price, 0);
-}
-
 // buyNiceTiming - 예산 내 최대 수량 매수
 TEST(BuyLogicTest, BuyNiceTiming_ShouldBuyMaximumQtyWithinBudget) {
-    AutoTrader trader;
+    StockerBrokerMock mock;
+    EXPECT_CALL(mock, getPrice(_, _))
+        .Times(2)
+        .WillOnce(Return(4900))
+        .WillOnce(Return(5000));
+
+    EXPECT_CALL(mock, buy("005930", 5000, 200))
+        .Times(1);
+
+    AutoTradingSystem trader{ &mock };
+
     bool result = trader.buyNiceTiming("005930", 10000);
     EXPECT_TRUE(result);
 }
 
 // buyNiceTiming - 현재가가 예산 초과인 경우 매수하지 않음
 TEST(BuyLogicTest, BuyNiceTiming_ShouldNotBuyIfTooExpensive) {
-    AutoTrader trader;
+    StockerBrokerMock mock;
+    EXPECT_CALL(mock, getPrice(_, _))
+        .Times(2)
+        .WillOnce(Return(5100))
+        .WillOnce(Return(5000));
+
+    AutoTradingSystem trader{ &mock };
     bool result = trader.buyNiceTiming("005930", 1000);
     EXPECT_FALSE(result);
 }
