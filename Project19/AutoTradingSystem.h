@@ -6,4 +6,5 @@ class AutoTradingSystem {
   StockerBroker *stockBroker;
  public:
   void selectStockBroker(std::string nameOfStockBroker);
+  std::string getStockBroker();
 };

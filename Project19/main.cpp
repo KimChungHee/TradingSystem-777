@@ -14,13 +14,13 @@ using namespace std;
 TEST(BrokerSelectTest, ShouldSelectKiwerBroker) {
   AutoTradingSystem system;
   system.selectStockBroker("kiwer");
-  // 기대 결과: 내부적으로 Kiwer API를 사용하는 구조로 설정됨
+  EXPECT_EQ(system.getStockBroker(), "kiwer");
 }
 
 TEST(BrokerSelectTest, ShouldSelectNemoBroker) {
   AutoTradingSystem system;
   system.selectStockBroker("nemo");
-  // 기대 결과: 내부적으로 Nemo API를 사용하는 구조로 설정됨
+  EXPECT_EQ(system.getStockBroker(), "nemo");
 }
 
 int main() {
