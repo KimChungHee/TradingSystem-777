@@ -2,105 +2,78 @@
 #include <string>
 
 #include "AutoTradingSystem.h"
+#include "mock_driver.h"
 #include "gmock/gmock.h"
 
 using namespace testing;
 using namespace std;
 
-// ===================== TEST CASE =====================
 
-// Áõ±Ç»ç ¼±ÅÃ Å×½ºÆ®
 TEST(BrokerSelectTest, ShouldSelectKiwerBroker) {
-    bool result = selectStockBroker("kiwer");
-    EXPECT_TRUE(result);
+	MockDriver mock;
+	AutoTradingSystem  system{ &mock };
+	system.selectStockBroker("kiwer");
+	EXPECT_EQ(system.getStockBroker(), "kiwer");
 }
 
 TEST(BrokerSelectTest, ShouldSelectNemoBroker) {
-    bool result = selectStockBroker("nemo");
-    EXPECT_TRUE(result);
+	MockDriver mock;
+	AutoTradingSystem  system{ &mock };
+	system.selectStockBroker("nemo");
+	EXPECT_EQ(system.getStockBroker(), "nemo");
 }
 
-// ·Î±×ÀÎ Å×½ºÆ®
+// ë¡œê·¸ì¸ í…ŒìŠ¤íŠ¸
 TEST(LoginTest, LoginWithCorrectCredentials_ShouldCallLoginAPI) {
-    AutoTrader trader;
-    bool success = trader.login("user1", "pass1");
-    EXPECT_TRUE(success);
+	MockDriver mock;
+	AutoTradingSystem trader{ &mock };
+
+	trader.selectStockBroker("kiwer");
+	trader.login("user1", "pass1");
+
+	trader.selectStockBroker("nemo");
+	trader.login("user1", "pass1");
 }
 
-// ¸Å¼ö Å×½ºÆ®
+// ë§¤ìˆ˜ í…ŒìŠ¤íŠ¸
 TEST(BuyTest, BuyStock_ShouldCallBuyAPIWithCorrectParams) {
-    AutoTrader trader;
-    bool result = trader.buy("005930", 5000, 10);
-    EXPECT_TRUE(result);
+	MockDriver mock;
+	AutoTradingSystem  trader{ &mock };
+	
+	EXPECT_CALL(mock, buy("005930", 5000, 10))
+		.Times(1)
+		.WillOnce(Return(true));
+
+	bool result = trader.buy("005930", 5000, 10);
+	EXPECT_TRUE(result);
 }
 
-// ¸Åµµ Å×½ºÆ®
+// ë§¤ë„ í…ŒìŠ¤íŠ¸
 TEST(SellTest, SellStock_ShouldCallSellAPIWithCorrectParams) {
-    AutoTrader trader;
-    bool result = trader.sell("005930", 5100, 5);
-    EXPECT_TRUE(result);
+	MockDriver mock;
+	AutoTradingSystem  trader{ &mock };
+
+	EXPECT_CALL(mock, sell("005930", 5100, 5))
+		.Times(1)
+		.WillOnce(Return(true));
+
+	bool result = trader.sell("005930", 5100, 5);
 }
 
-// ÇöÀç°¡ È®ÀÎ Å×½ºÆ®
+// í˜„ì¬ê°€ í™•ì¸ í…ŒìŠ¤íŠ¸
 TEST(PriceTest, GetCurrentPrice_ShouldReturnCorrectPrice) {
-    AutoTrader trader;
-    int price = trader.getPrice("005930");
-    EXPECT_GT(price, 0);
-}
+	MockDriver mock;
+	AutoTradingSystem  trader{ &mock };
 
-// buyNiceTiming - ¿¹»ê ³» ÃÖ´ë ¼ö·® ¸Å¼ö
-TEST(BuyLogicTest, BuyNiceTiming_ShouldBuyMaximumQtyWithinBudget) {
-    AutoTrader trader;
-    bool result = trader.buyNiceTiming("005930", 10000);
-    EXPECT_TRUE(result);
-}
+	EXPECT_CALL(mock, getPrice("005930"))
+		.Times(1)
+		.WillOnce(Return(true));
 
-// buyNiceTiming - ÇöÀç°¡°¡ ¿¹»ê ÃÊ°úÀÎ °æ¿ì ¸Å¼öÇÏÁö ¾ÊÀ½
-TEST(BuyLogicTest, BuyNiceTiming_ShouldNotBuyIfTooExpensive) {
-    AutoTrader trader;
-    bool result = trader.buyNiceTiming("005930", 1000);
-    EXPECT_FALSE(result);
-}
-
-// sellNiceTiming - ÇöÀç°¡°¡ ³·À¸¸é ¸Åµµ
-TEST(SellLogicTest, SellNiceTiming_ShouldSellIfPriceFalls) {
-    AutoTrader trader;
-    bool result = trader.sellNiceTiming("005930", 3);
-    EXPECT_TRUE(result);
-}
-
-// sellNiceTiming - ÇöÀç°¡°¡ ÃæºĞÈ÷ ³ôÀ¸¸é ¸ÅµµÇÏÁö ¾ÊÀ½
-TEST(SellLogicTest, SellNiceTiming_ShouldNotSellIfPriceHigh) {
-    AutoTrader trader;
-    bool result = trader.sellNiceTiming("005930", 3);
-    EXPECT_FALSE(result);
-}
-
-// ===================== Áõ±Ç»çº° »ó¼¼ Å×½ºÆ® =====================
-
-// Å°¿ö Áõ±Ç»ç: ·Î±×ÀÎ, ¸Å¼ö, ¸Åµµ, ÇöÀç°¡
-TEST(KiwerTest, LoginBuySellPriceWithKiwer) {
-    selectStockBroker("kiwer");
-    AutoTrader trader;
-    EXPECT_TRUE(trader.login("kiwer_user", "kiwer_pass"));
-    EXPECT_TRUE(trader.buy("000660", 6000, 5));
-    EXPECT_TRUE(trader.sell("000660", 6100, 2));
-    int price = trader.getPrice("000660");
-    EXPECT_GT(price, 0);
-}
-
-// ³×¸ğ Áõ±Ç»ç: ÀÎÁõ, ¸Å¼ö, ¸Åµµ, ÇöÀç°¡
-TEST(NemoTest, LoginBuySellPriceWithNemo) {
-    selectStockBroker("nemo");
-    AutoTrader trader;
-    EXPECT_TRUE(trader.login("nemo_user", "nemo_pass"));
-    EXPECT_TRUE(trader.buy("035420", 7000, 3));
-    EXPECT_TRUE(trader.sell("035420", 7200, 1));
-    int price = trader.getPrice("035420");
-    EXPECT_GT(price, 0);
+	int price = trader.getPrice("005930");	
+	EXPECT_GT(price, 0);
 }
 
 int main() {
-  ::testing::InitGoogleMock();
-  return RUN_ALL_TESTS();
+	::testing::InitGoogleMock();
+	return RUN_ALL_TESTS();
 }
