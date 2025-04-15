@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <string>
 #include "StockerBroker.h"
 using namespace std;
@@ -15,4 +15,6 @@ public:
 	bool buy(string code, int price, int amount);
 	bool sell(string code, int price, int amount);
 	int getPrice(string code);
+	bool buyNiceTiming(string code, int price);
+
 };

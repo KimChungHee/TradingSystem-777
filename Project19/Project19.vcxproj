@@ -130,14 +130,20 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AutoTradingSystem.cpp" />
+    <ClCompile Include="AutoTradingSystem.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"> %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="kiwer_api.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="main.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"> %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="nemo_api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoTradingSystem.h" />
+
     <ClInclude Include="mock_driver.h" />
+
     <ClInclude Include="StockerBroker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

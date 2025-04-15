@@ -31,3 +31,24 @@ bool AutoTradingSystem::sell(string code, int price, int amount) {
 int AutoTradingSystem::getPrice(string code) {
 	return stockBroker->getPrice(code);
 }
+
+bool AutoTradingSystem::buyNiceTiming(string code, int price) {
+	const int Budget = 1000000;
+	int price_before, price_after;
+
+	price_before = stockBroker->getPrice(code);
+	price_after = stockBroker->getPrice(code);
+
+	if (price_after > price_before) {
+		if (Budget < price_after)
+			return false;
+		stockBroker->buy(code, price_after, Budget / price_after);
+		return true;
+	}
+	else if (price_after < price) {
+		stockBroker->buy(code, price, Budget / price);
+		return true;
+	}
+	return false;
+}
+
