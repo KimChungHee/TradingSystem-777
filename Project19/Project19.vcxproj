@@ -129,6 +129,16 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AutoTradingSystem.cpp" />
+    <ClCompile Include="kiwer_api.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="nemo_api.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AutoTradingSystem.h" />
+    <ClInclude Include="StockerBroker.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\gmock.1.11.0\build\native\gmock.targets" Condition="Exists('..\packages\gmock.1.11.0\build\native\gmock.targets')" />
