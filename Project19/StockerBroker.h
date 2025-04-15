@@ -12,6 +12,7 @@ protected:
 public:
 	StockerBroker(std::string name) :name(name) {}
 	virtual string getName() = 0;
+	virtual void selectStockBroker(string nameOfStockBroker) = 0;
 	virtual bool login(string id, string pass) = 0;
 	virtual bool buy(string code, int price, int amount) = 0;
 	virtual bool sell(string code, int price, int amount) = 0;
@@ -23,7 +24,13 @@ public:
 class KiwerDriver : public StockerBroker {
 public:
 	KiwerDriver() : StockerBroker("kiwer") {}
+
+	void selectStockBroker(string nameOfStockBroker) {
+		name = nameOfStockBroker;
+	}
+
 	string getName() override { return name; }
+
 	bool login(string id, string pass) {
 		kiwerAPI.login(id, pass);
 		return true;
@@ -50,7 +57,13 @@ private:
 class NemoDriver : public StockerBroker {
 public:
 	NemoDriver() : StockerBroker("nemo") {}
-	std::string getName() override { return name; }
+
+	void selectStockBroker(string nameOfStockBroker) {
+		name = nameOfStockBroker;
+		//return name;
+	}
+
+	string getName() override { return name; }
 
 	bool login(string id, string pass) { 
 		nemoAPI.certification(id, pass);

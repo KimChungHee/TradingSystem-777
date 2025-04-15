@@ -29,10 +29,14 @@ TEST(LoginTest, LoginWithCorrectCredentials_ShouldCallLoginAPI) {
 	AutoTradingSystem trader{ &mock };
 
 	trader.selectStockBroker("kiwer");
-	trader.login("user1", "pass1");
+	EXPECT_CALL(mock, login(_, _))
+		.WillRepeatedly([&](const string& id, const string& pw) {
+		return mock.delegateLogin(id, pw);
+			});
 
-	trader.selectStockBroker("nemo");
-	trader.login("user1", "pass1");
+	AutoTradingSystem system(&mock);
+	EXPECT_TRUE(system.login("user1", "pass1"));
+	EXPECT_FALSE(system.login("user1", "pass22"));
 }
 
 // 매수 테스트
