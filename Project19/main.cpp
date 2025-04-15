@@ -1,6 +1,8 @@
-#include "gmock/gmock.h"
-#include <string>
 #include <iostream>
+#include <string>
+
+#include "AutoTradingSystem.h"
+#include "gmock/gmock.h"
 
 using namespace testing;
 using namespace std;
@@ -99,6 +101,6 @@ TEST(NemoTest, LoginBuySellPriceWithNemo) {
 }
 
 int main() {
-    ::testing::InitGoogleMock();
-    return RUN_ALL_TESTS();
+  ::testing::InitGoogleMock();
+  return RUN_ALL_TESTS();
 }
