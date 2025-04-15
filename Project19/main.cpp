@@ -7,19 +7,18 @@ using namespace std;
 
 // ===================== TEST CASE =====================
 
-// buyNiceTiming - 예산 내 최대 수량 매수
-// 설명: 현재가 기준으로 예산 내 최대 수량을 매수함
-TEST(BuyLogicTest, BuyNiceTiming_ShouldBuyMaximumQtyWithinBudget) {
+// sellNiceTiming - 현재가가 낮으면 매도
+TEST(SellLogicTest, SellNiceTiming_ShouldSellIfPriceFalls) {
     AutoTrader trader;
-    trader.buyNiceTiming("005930", 10000);
-    // 기대 결과: getPrice()를 통해 받아온 가격 기준으로 최대 수량 매수
+    trader.sellNiceTiming("005930", 3);
+    // 기대 결과: 현재가가 기준치보다 낮으면 지정 수량만큼 매도
 }
 
-// buyNiceTiming - 현재가가 예산 초과인 경우 매수하지 않음
-TEST(BuyLogicTest, BuyNiceTiming_ShouldNotBuyIfTooExpensive) {
+// sellNiceTiming - 현재가가 충분히 높으면 매도하지 않음
+TEST(SellLogicTest, SellNiceTiming_ShouldNotSellIfPriceHigh) {
     AutoTrader trader;
-    trader.buyNiceTiming("005930", 1000);
-    // 기대 결과: 현재가가 너무 비싸면 매수 로직 수행하지 않음
+    trader.sellNiceTiming("005930", 3);
+    // 기대 결과: 현재가가 충분히 높으면 매도하지 않음
 }
 
 
