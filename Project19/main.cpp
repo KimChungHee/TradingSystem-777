@@ -8,76 +8,94 @@ using namespace std;
 // ===================== TEST CASE =====================
 
 // 증권사 선택 테스트
-// 설명: selectStockBroker를 통해 원하는 증권사를 선택할 수 있어야 한다
 TEST(BrokerSelectTest, ShouldSelectKiwerBroker) {
-    selectStockBroker("kiwer");
-    // 기대 결과: 내부적으로 Kiwer API를 사용하는 구조로 설정됨
+    bool result = selectStockBroker("kiwer");
+    EXPECT_TRUE(result);
 }
 
 TEST(BrokerSelectTest, ShouldSelectNemoBroker) {
-    selectStockBroker("nemo");
-    // 기대 결과: 내부적으로 Nemo API를 사용하는 구조로 설정됨
+    bool result = selectStockBroker("nemo");
+    EXPECT_TRUE(result);
 }
 
 // 로그인 테스트
-// 설명: 사용자가 입력한 ID/PASS가 증권사 API에 위임되는지 확인
 TEST(LoginTest, LoginWithCorrectCredentials_ShouldCallLoginAPI) {
     AutoTrader trader;
-    trader.login("user1", "pass1");
-    // 기대 결과: login 함수가 증권사 API에 올바르게 위임됨
+    bool success = trader.login("user1", "pass1");
+    EXPECT_TRUE(success);
 }
 
 // 매수 테스트
-// 설명: 종목코드, 가격, 수량이 정확하게 매수 API로 전달되는지 확인
 TEST(BuyTest, BuyStock_ShouldCallBuyAPIWithCorrectParams) {
     AutoTrader trader;
-    trader.buy("005930", 5000, 10);
-    // 기대 결과: buy("005930", 5000, 10)이 증권사 API로 전달됨
+    bool result = trader.buy("005930", 5000, 10);
+    EXPECT_TRUE(result);
 }
 
 // 매도 테스트
-// 설명: 종목코드, 가격, 수량이 정확하게 매도 API로 전달되는지 확인
 TEST(SellTest, SellStock_ShouldCallSellAPIWithCorrectParams) {
     AutoTrader trader;
-    trader.sell("005930", 5100, 5);
-    // 기대 결과: sell("005930", 5100, 5)이 증권사 API로 전달됨
+    bool result = trader.sell("005930", 5100, 5);
+    EXPECT_TRUE(result);
 }
 
 // 현재가 확인 테스트
-// 설명: 특정 종목코드의 현재가를 요청했을 때 예상한 값이 리턴되는지 확인
 TEST(PriceTest, GetCurrentPrice_ShouldReturnCorrectPrice) {
     AutoTrader trader;
     int price = trader.getPrice("005930");
-    EXPECT_GT(price, 0);  // 현재가는 0보다 커야 한다는 조건
+    EXPECT_GT(price, 0);
 }
 
 // buyNiceTiming - 예산 내 최대 수량 매수
-// 설명: 현재가 기준으로 예산 내 최대 수량을 매수함
 TEST(BuyLogicTest, BuyNiceTiming_ShouldBuyMaximumQtyWithinBudget) {
     AutoTrader trader;
-    trader.buyNiceTiming("005930", 10000);
-    // 기대 결과: getPrice()를 통해 받아온 가격 기준으로 최대 수량 매수
+    bool result = trader.buyNiceTiming("005930", 10000);
+    EXPECT_TRUE(result);
 }
 
 // buyNiceTiming - 현재가가 예산 초과인 경우 매수하지 않음
 TEST(BuyLogicTest, BuyNiceTiming_ShouldNotBuyIfTooExpensive) {
     AutoTrader trader;
-    trader.buyNiceTiming("005930", 1000);
-    // 기대 결과: 현재가가 너무 비싸면 매수 로직 수행하지 않음
+    bool result = trader.buyNiceTiming("005930", 1000);
+    EXPECT_FALSE(result);
 }
 
 // sellNiceTiming - 현재가가 낮으면 매도
 TEST(SellLogicTest, SellNiceTiming_ShouldSellIfPriceFalls) {
     AutoTrader trader;
-    trader.sellNiceTiming("005930", 3);
-    // 기대 결과: 현재가가 기준치보다 낮으면 지정 수량만큼 매도
+    bool result = trader.sellNiceTiming("005930", 3);
+    EXPECT_TRUE(result);
 }
 
 // sellNiceTiming - 현재가가 충분히 높으면 매도하지 않음
 TEST(SellLogicTest, SellNiceTiming_ShouldNotSellIfPriceHigh) {
     AutoTrader trader;
-    trader.sellNiceTiming("005930", 3);
-    // 기대 결과: 현재가가 충분히 높으면 매도하지 않음
+    bool result = trader.sellNiceTiming("005930", 3);
+    EXPECT_FALSE(result);
+}
+
+// ===================== 증권사별 상세 테스트 =====================
+
+// 키워 증권사: 로그인, 매수, 매도, 현재가
+TEST(KiwerTest, LoginBuySellPriceWithKiwer) {
+    selectStockBroker("kiwer");
+    AutoTrader trader;
+    EXPECT_TRUE(trader.login("kiwer_user", "kiwer_pass"));
+    EXPECT_TRUE(trader.buy("000660", 6000, 5));
+    EXPECT_TRUE(trader.sell("000660", 6100, 2));
+    int price = trader.getPrice("000660");
+    EXPECT_GT(price, 0);
+}
+
+// 네모 증권사: 인증, 매수, 매도, 현재가
+TEST(NemoTest, LoginBuySellPriceWithNemo) {
+    selectStockBroker("nemo");
+    AutoTrader trader;
+    EXPECT_TRUE(trader.login("nemo_user", "nemo_pass"));
+    EXPECT_TRUE(trader.buy("035420", 7000, 3));
+    EXPECT_TRUE(trader.sell("035420", 7200, 1));
+    int price = trader.getPrice("035420");
+    EXPECT_GT(price, 0);
 }
 
 int main() {
