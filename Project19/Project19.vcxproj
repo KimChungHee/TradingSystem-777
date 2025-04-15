@@ -141,6 +141,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoTradingSystem.h" />
+
+    <ClInclude Include="mock_driver.h" />
+
     <ClInclude Include="StockerBroker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
